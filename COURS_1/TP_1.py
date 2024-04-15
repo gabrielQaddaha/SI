@@ -4,46 +4,62 @@ import sys
 
 class Livre:
     def __init__(self, nom, tag, image):
-        self.nom = nom
-        self.tag = tag
-        self.image = image
+        self.__nom = nom
+        self.__tag = tag
+        self.__image = image
+
+    def __str__(self):
+        return f"Livre: {self.__nom}\nTag: {self.__tag}\nImage: {self.__image}\n"
+    
+    @property
+    def nom(self):
+        return self.__nom
+    @property
+    def tag(self):
+        return self.__tag
+    @property
+    def image(self):
+        return self.__image
+    
+
+class LivreEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Livre):
+            return {
+                "nom": obj.nom,
+                "tag": obj.tag,
+                "image": obj.image
+            }
+        return super().default(obj)
     
         
 class Bibliotheque:
     def __init__(self):
-        self.livres = []
+        self.__livres = []
     
     def ajouter_livre(self, livre):
-        self.livres.append(livre)
+        self.__livres.append(livre)
     
     def supprimer_livre(self, nom):
-        for livre in self.livres:
-            if livre.nom == nom:
-                self.livres.remove(livre)
+        for livre in self.__livres:
+            if livre.__nom == nom:
+                self.__livres.remove(livre)
     
     def lister_livres(self):
-        if not self.livres:
+        if not self.__livres:
             print("Aucun livre dans la bibliothèque.")
         else:
-            for livre in self.livres:
-                print(livre.nom, "\n")
-                print(f"       Tag : {livre.tag}")
-                print(f"       Image : {livre.image}\n")
+            for livre in self.__livres:
+                print(livre)
     
     def detail_livre(self, nom):
-        for livre in self.livres:
-            if livre.nom == nom:
+        for livre in self.__livres:
+            if livre.__nom == nom:
                 print(livre)
     
     def sauvegarder(self):
         with open("bibliotheque.json", "w") as f:
-            json.dump([livre.__dict__ for livre in self.livres], f)
-    
-    def charger(self):
-        if os.path.exists("bibliotheque.json"):
-            with open("bibliotheque.json", "r") as f:
-                data = json.load(f)
-                self.livres = [Livre(livre["nom"], livre["tag"], livre["image"]) for livre in data]
+            json.dump([livre.__dict__ for livre in self.__livres], f)
 
 def menu():
     print("1. Ajouter un livre")
