@@ -10,15 +10,17 @@ class FlyBehavior(ABC):
 
 class Flyable(FlyBehavior):
     def voler(self) -> None:
-
         print("I really can fly !!!")
-
 
 class NotFlyable(FlyBehavior):
     def voler(self) -> None:
         print("I believe i can fly but not realy ...")
 
+class BrokenWings(FlyBehavior):
+    def voler(self) -> None:
+        print("I can't fly, my wings are broken !!!!!!!")
 
+# CANCANER
 class QuackBehavior(ABC):
     @abstractmethod
     def cancaner(self):
@@ -31,7 +33,6 @@ class CanCan(QuackBehavior):
 
 
 class NotCanCan(QuackBehavior):
-
     def cancaner(self) -> None:
         print("\nI can't COIN COIN !!!!!!!!!!!!!!! ")
 
@@ -51,10 +52,28 @@ class Canard(ABC):
     def flyBehavior(self) -> FlyBehavior:
         return self.__flyBehavior
 
+    @flyBehavior.setter
+    def flyBehavior(self, value):
+        """
+            Sets the fly behavior.
+
+            Parameters:
+            value (FlyBehavior): The new fly behavior to be set.
+
+            Raises:
+            ValueError: If the value is not an instance of FlyBehavior.
+
+            """
+        if isinstance(value, FlyBehavior):
+            self.__flyBehavior = value
+        else:
+            raise ValueError("Unable to set a new value")
+
     @property
     def quackBehavior(self) -> QuackBehavior:
         return self.__quackBehavior
-
+    
+    
     def voler(self):
         self.flyBehavior.voler()
 
@@ -81,3 +100,5 @@ if __name__ == "__main__":
     couRouge = CouRouge("zoubi")
     couRouge.voler()
     couRouge.cancaner()
+    couRouge.flyBehavior = BrokenWings()
+    couRouge.voler()
