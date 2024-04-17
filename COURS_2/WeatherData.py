@@ -48,10 +48,10 @@ class DisplayElement(ABC):
         pass
 
 class CurrentConditionsDisplay(DisplayElement):
-    def __init__(self, weatherData) -> None:
-        self.__temperature = 0
-        self.__humidity = 0
-        self.__pressure = 0
+    def __init__(self, weatherData, temperature = None, humidity = None, pressure = None ) -> None:
+        self.__temperature = temperature
+        self.__humidity = humidity
+        self.__pressure = pressure
         self.__weatherData = weatherData
         self.__weatherData.measurementsChanged = self.update
 
