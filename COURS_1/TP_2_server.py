@@ -34,6 +34,15 @@ class LivreEncoder(json.JSONEncoder):
     
         
 class Bibliotheque:
+
+    bibliotheque = None
+
+    @classmethod
+    def get_instance(cls):
+        if cls.bibliotheque is None:
+            cls.bibliotheque = Bibliotheque()
+        return cls.bibliotheque
+
     def __init__(self):
         self.__livres = []
     
@@ -50,12 +59,12 @@ class Bibliotheque:
             print("Aucun livre dans la bibliothèque.")
         else:
             for livre in self.__livres:
-                print(livre)
+                return livre
     
     def detail_livre(self, nom):
         for livre in self.__livres:
             if livre.__nom == nom:
-                print(livre)
+                return livre
     
     def sauvegarder(self):
         with open("bibliotheque.json", "w") as f:
@@ -74,7 +83,6 @@ def menu():
 
 def main():
     bibliotheque = Bibliotheque()
-    bibliotheque.charger()
     
     while True:
         choix = menu()
@@ -95,8 +103,6 @@ def main():
             bibliotheque.detail_livre(nom)
         elif choix == "5":
             bibliotheque.sauvegarder()
-        elif choix == "6":
-            bibliotheque.charger()
         elif choix == "7":
             sys.exit(0)
         else:
@@ -105,12 +111,20 @@ def main():
 class Server(socketserver.BaseRequestHandler):
 
     def handle(self):
-        # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip()
+        self.data = self.request.recv(1024).strip().decode("utf-8")
         print("Received from {}:".format(self.client_address[0]))
         print(self.data)
-        # just send back the same data, but upper-cased
-        self.request.sendall(self.data.upper())
+        response = 'Response: '
+
+        if self.data == 'list':
+            response += Bibliotheque.get_instance().lister_livres()
+        if self.data.startswith('add') :
+            command, nom, tag, image = self.data.split(' ')
+            livre = Livre(nom, tag, image)
+            Bibliotheque.get_instance().ajouter_livre(livre)
+            response = f"Livre ajouté {livre}"
+
+        self.request.sendall(bytes(response, "utf-8"))
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 9999
@@ -118,6 +132,4 @@ if __name__ == "__main__":
     with socketserver.TCPServer((HOST, PORT), Server) as server:
         server.serve_forever()
 
-if __name__ == "__main__":
     main()
-
