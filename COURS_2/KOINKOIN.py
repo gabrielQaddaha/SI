@@ -7,7 +7,6 @@ class FlyBehavior(ABC):
     def voler(self):
         pass
 
-
 class Flyable(FlyBehavior):
     def voler(self) -> None:
         print("I really can fly !!!")
@@ -93,12 +92,4 @@ class CouRouge(Canard):
         super().__init__(name, NotFlyable(), NotCanCan())
 
 
-if __name__ == "__main__":
-    colvert = Colvert("coucou")
-    colvert.voler()
-    colvert.cancaner()
-    couRouge = CouRouge("zoubi")
-    couRouge.voler()
-    couRouge.cancaner()
-    couRouge.flyBehavior = BrokenWings()
-    couRouge.voler()
+
